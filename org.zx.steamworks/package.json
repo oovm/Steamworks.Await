@@ -1,0 +1,23 @@
+{
+    "name": "org.zx.steamworks",
+    "rootNamespace": "Zx.Steamworks",
+    "displayName": "Steamworks",
+    "description": "Steamworks API in async-await style",
+    "version": "0.0.0",
+    "unity": "2019.0",
+    "author": {
+        "name": "Aster"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://https://github.com/oovm/Steamworks.Await.get?path=/org.zx.steamworks"
+    },
+    "dependencies": {
+        "com.rlabrecque.steamworks.net": "git+https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net"
+    },
+    "keywords": [
+        "steam",
+        "steamworks"
+    ]
+}
