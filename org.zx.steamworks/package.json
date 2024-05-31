@@ -1,12 +1,15 @@
 {
     "name": "org.zx.steamworks",
     "rootNamespace": "Zx.Steamworks",
-    "displayName": "Steamworks",
+    "displayName": "Zx - Steamworks",
     "description": "Steamworks API in async-await style",
     "version": "0.0.0",
-    "unity": "2019.0",
+    "unity": "2019.3",
+    "unityRelease": "7f1",
     "author": {
-        "name": "Aster"
+        "name": "Zx Framework",
+        "email": "192608617@qq.com",
+        "url": "https://https://github.com/oovm/UnityZx"
     },
     "license": "MIT",
     "repository": {
@@ -14,7 +17,6 @@
         "url": "git+https://https://github.com/oovm/Steamworks.Await.get?path=/org.zx.steamworks"
     },
     "dependencies": {
-        "com.rlabrecque.steamworks.net": "git+https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net"
     },
     "keywords": [
         "steam",

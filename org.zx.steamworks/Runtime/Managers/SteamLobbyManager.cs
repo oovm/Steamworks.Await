@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Steamworks;
@@ -79,6 +82,16 @@ namespace Zx.Steamworks.Managers
             return SteamMatchmaking.GetLobbyByIndex((int) index);
         }
 
+        public CSteamID GetRoomOwner()
+        {
+            if (Room == null)
+            {
+                throw new Exception("Room is null");
+            }
+
+            return SteamMatchmaking.GetLobbyOwner(Room.Value);
+        }
+
 
         public static string GetRoomData(CSteamID lobby, string key)
         {
@@ -99,7 +112,7 @@ namespace Zx.Steamworks.Managers
         {
             return SteamMatchmaking.SetLobbyData(lobby, key, value);
         }
-        
+
         public async Task<LobbyCreated_t> CreateLobby(int maxMembers)
         {
             var source = new TaskCompletionSource<LobbyCreated_t>();
@@ -189,5 +202,75 @@ namespace Zx.Steamworks.Managers
         {
             Debug.Log($"受到 {e.m_ulSteamIDUser} 的邀请, 房间为 {e.m_ulSteamIDLobby}");
         });
+
+
+        public bool SetLocalAsServer()
+        {
+            if (Room == null)
+            {
+                Debug.LogError("找不到房间");
+                return false;
+            }
+
+            var ip = FindIpAddress();
+
+            if (ip == null)
+            {
+                Debug.LogError("找不到可用的 IP 地址");
+                return false;
+            }
+
+            var port = FindAvailablePort();
+            if (port == null)
+            {
+                Debug.LogError("找不到可用的端口");
+                return false;
+            }
+
+            SteamMatchmaking.SetLobbyGameServer(
+                Room.Value,
+                BitConverter.ToUInt32(ip.GetAddressBytes(), 0),
+                port.Value,
+                (CSteamID) 0
+            );
+            return true;
+        }
+
+
+        public static IPAddress FindIpAddress()
+        {
+            var ip = SteamGameServer.GetPublicIP();
+            return ip.ToIPAddress();
+        }
+
+        public static ushort? FindAvailablePort(ushort start = 6666, ushort attempts = 100)
+        {
+            // 从 27015 到 27064 之间尝试端口号
+            var ports = Enumerable.Range(start, attempts).Select(p => (ushort) p);
+            foreach (var port in ports)
+            {
+                if (IsPortAvailable(port))
+                {
+                    return port;
+                }
+            }
+
+            return null;
+        }
+
+        public static bool IsPortAvailable(ushort port)
+        {
+            try
+            {
+                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                socket.Blocking = true;
+                socket.Bind(new IPEndPoint(IPAddress.Any, port));
+                return true;
+            }
+            catch (SocketException)
+            {
+                return false;
+            }
+        }
     }
 }
